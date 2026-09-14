@@ -12,7 +12,7 @@ const PORT: number = process.env.PORT as unknown as number || 3000;
 
 if (process.env.NODE_ENV === "development") {
   console.log("App starting in ${process.env.NODE_ENV} environment")
-  app.use(cors({ origin: 'http://localhost:5000' })) // development frontend origin
+  app.use(cors({ origin: 'http://localhost:5173' })) // development frontend origin
 }
 
 app.use('/api/users', usersRouter);

@@ -18,6 +18,7 @@ export interface UserWeightDevelopmentResponse {
 }
 
 export interface UserResponse {
+    id: string,
     username: string,
     height_cm: string,
     date_of_birth: Date,
@@ -26,6 +27,7 @@ export interface UserResponse {
 
 export function mapAllUserResponses(users: User[], weights: UserWeightDevelopment[]): UserResponse[] {
     const responses: UserResponse[] = users.map((row) => ({
+        id: row.id,
         username: row.username,
         height_cm: row.height_cm,
         date_of_birth: row.date_of_birth,
