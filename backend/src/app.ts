@@ -8,9 +8,10 @@ import activitiesRouter from './routes/activities';
 import eventsRouter from './routes/events';
 
 const app: Express = express();
-const PORT: number = process.env.APP_PORT as unknown as number || 3000;
+const PORT: number = process.env.PORT as unknown as number || 3000;
 
 if (process.env.NODE_ENV === "development") {
+  console.log("App starting in ${process.env.NODE_ENV} environment")
   app.use(cors({ origin: 'http://localhost:5000' })) // development frontend origin
 }
 
