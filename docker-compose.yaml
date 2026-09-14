@@ -1,4 +1,25 @@
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    
+    container_name: sportsnotebook_backend
+
+    restart: unless-stopped
+
+    env_file: ./.env
+
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+    networks:
+      - app_network
+
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+
   activities_db:
     image: postgres:18
 
@@ -12,6 +33,9 @@ services:
     volumes:
       - activities_db_data:/var/lib/postgresql
       - ./db/init/activities:/docker-entrypoint-initdb.d
+
+    networks:
+      - app_network
 
     ports:
       - "${POSTGRES_DB_ACTIVITIES_PORT}:5432"
@@ -30,6 +54,9 @@ services:
       - users_db_data:/var/lib/postgresql
       - ./db/init/users:/docker-entrypoint-initdb.d
 
+    networks:
+      - app_network
+
     ports:
       - "${POSTGRES_DB_USERS_PORT}:5432"
 
@@ -47,6 +74,9 @@ services:
       - events_db_data:/var/lib/postgresql
       - ./db/init/events:/docker-entrypoint-initdb.d
 
+    networks:
+      - app_network
+
     ports:
       - "${POSTGRES_DB_EVENTS_PORT}:5432"
 
@@ -54,3 +84,8 @@ volumes:
   activities_db_data:
   users_db_data:
   events_db_data:
+
+networks:
+  app_network:
+    driver: bridge
+

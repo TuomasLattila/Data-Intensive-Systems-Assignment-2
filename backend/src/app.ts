@@ -1,4 +1,5 @@
 import express, { type Express, type Request, type Response } from 'express';
+import cors from 'cors';
 import './env';
 
 // Routes:
@@ -8,6 +9,10 @@ import eventsRouter from './routes/events';
 
 const app: Express = express();
 const PORT: number = process.env.APP_PORT as unknown as number || 3000;
+
+if (process.env.NODE_ENV === "development") {
+  app.use(cors({ origin: 'http://localhost:5000' })) // development frontend origin
+}
 
 app.use('/api/users', usersRouter);
 app.use('/api/activities', activitiesRouter);
