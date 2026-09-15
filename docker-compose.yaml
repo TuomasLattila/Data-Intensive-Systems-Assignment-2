@@ -1,4 +1,28 @@
 services:
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: sportsnotebook_frontend
+
+    restart: unless-stopped
+
+    env_file: ./frontend/.env
+
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+    networks:
+      - app_network
+
+    ports:
+    - ${FRONTEND_PORT}:${FRONTEND_PORT}
+
+    depends_on:
+      - backend
+
   backend:
     build:
       context: ./backend
