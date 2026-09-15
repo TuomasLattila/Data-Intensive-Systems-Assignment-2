@@ -9,6 +9,14 @@ import { useNavigate } from 'react-router'
 type User = {
   id: string
   username: string
+  height_cm: string
+  date_of_birth: string
+  weight_development: UserWeight[]
+}
+
+type UserWeight = {
+  weight_kg: string
+  created_at: string
 }
 
 type ApiResp = {
@@ -47,7 +55,7 @@ export default function FrontPage() {
     <div>
       <div>
         <h1>
-          Select user
+          Select user:
         </h1>
       </div>
       <div style={{ marginTop: 50 }}>
