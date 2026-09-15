@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router'
-import FrontPage from './components/FrontPage'
-import DataPage from './components/DataPage'
+import FrontPage from './Pages/FrontPage'
+import DataPage from './Pages/DataPage'
 
 function App() {
 

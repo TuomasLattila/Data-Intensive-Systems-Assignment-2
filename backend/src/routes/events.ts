@@ -5,9 +5,9 @@ import { mapEventToResponse, Event } from '../models/event';
 
 const router: Router = express.Router();
 
-router.get('/all', async (req: Request, res: Response) => {
+router.get('/all/:id', async (req: Request, res: Response) => {
     try {
-        const result: QueryResult<Event> = await events_pool.query('SELECT * FROM events');
+        const result: QueryResult<Event> = await events_pool.query('SELECT * FROM events WHERE user_id = $1', [req.params.id]);
         res.json({ message: 'Get all events', data: result.rows.map(mapEventToResponse) }); // returns a list of all events recorded by all users
     } catch (error) {
         console.error('Error fetching events:', error);

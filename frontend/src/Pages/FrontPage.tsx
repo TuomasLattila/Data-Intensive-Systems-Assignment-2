@@ -6,23 +6,7 @@ import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router'
 
-type User = {
-  id: string
-  username: string
-  height_cm: string
-  date_of_birth: string
-  weight_development: UserWeight[]
-}
-
-type UserWeight = {
-  weight_kg: string
-  created_at: string
-}
-
-type ApiResp = {
-  message: string,
-  data: User[]
-}
+import {type User, type ApiResp} from '../types/Users'
 
 export default function FrontPage() {
   const [selectedUserId, setSelectedUserId] = useState('');
