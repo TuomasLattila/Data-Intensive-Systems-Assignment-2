@@ -60,7 +60,7 @@ export default function DataPage() {
           <h1>
             {user? `${user.username}` : 'Go back and choose an user...'}
           </h1>
-          <Box component="h4" sx={{ margin: 0 }}>{user? `Height: ${user.height_cm}` : ''}</Box >
+          <Box component="h4" sx={{ margin: 0 }}>{user? `Height: ${user.height_cm} cm` : ''}</Box >
           <Box component="h4" sx={{ margin: 0 }}>{user? `Birthday: ${user.date_of_birth.slice(0, 10)}` : ''}</Box >
           <Box component="h3" sx={{ marginTop: 3 }}>Weight development:</Box >
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -72,6 +72,7 @@ export default function DataPage() {
         <div style={{ flex: 1, marginLeft: 10, marginRight: 5}}>
           <Box component="h3" sx={{ marginTop: 3 }}>Events attended:</Box >
           <Table 
+            tableType={'events'}
             titles={["Event", "Description", "Date", "Placement"]} 
             rows={events.map((e) => [e.id, e.event_name, e.description, e.event_date.slice(0, 10), e.finishing_placement])}>
           </Table>
@@ -79,6 +80,7 @@ export default function DataPage() {
         <div style={{ flex: 1, marginRight: 10, marginLeft: 5 }}>
           <Box component="h3" sx={{ marginTop: 3 }}>Activity:</Box >
           <Table 
+            tableType={'activities'}
             titles={["Sport", "Duration (min)", "Date", "Burned calories"]} 
             rows={activities.map((a) => [a.id, a.activity_type, a.duration_minutes, a.activity_date.slice(0, 10), a.calories_burned])}>
           </Table>

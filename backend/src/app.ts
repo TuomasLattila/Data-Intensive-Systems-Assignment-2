@@ -15,6 +15,8 @@ if (process.env.NODE_ENV === "development") {
   app.use(cors({ origin: 'http://localhost:5173' })) // development frontend origin
 }
 
+app.use(express.json());
+
 app.use('/api/users', usersRouter);
 app.use('/api/activities', activitiesRouter);
 app.use('/api/events', eventsRouter);
