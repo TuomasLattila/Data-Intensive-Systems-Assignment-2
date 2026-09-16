@@ -8,6 +8,7 @@ export interface Event {
 }
 
 export interface EventResponse {
+    id: string,
     event_name: string,
     description: string,
     event_date: Date,
@@ -16,6 +17,7 @@ export interface EventResponse {
 
 export function mapEventToResponse(event: Event): EventResponse {
     return {
+        id: event.id,
         event_name: event.event_name,
         description: event.description,
         event_date: event.event_date,

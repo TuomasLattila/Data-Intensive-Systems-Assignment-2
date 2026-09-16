@@ -5,7 +5,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 export default function Chart({ xData, yData }: { xData: string[], yData: number[] }) {
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 700, backgroundColor: '#ffffff', borderRadius: 2, mt: 5}}>
+    <Box sx={{ width: '100%', maxWidth: 700, backgroundColor: '#ffffff', borderRadius: 2}}>
       <LineChart 
         xAxis={[{ 
           id: 'dates',

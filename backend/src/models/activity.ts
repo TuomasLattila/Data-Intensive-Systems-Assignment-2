@@ -9,6 +9,7 @@ export interface Activity {
 
 
 export interface ActivityResponse {
+    id: string,
     activity_type: string,
     duration_minutes: string,
     activity_date: Date,
@@ -17,6 +18,7 @@ export interface ActivityResponse {
 
 export function mapActivityToResponse(activity: Activity): ActivityResponse {
     return {
+        id: activity.id,
         activity_type: activity.activity_type,
         duration_minutes: activity.duration_minutes,
         activity_date: activity.activity_date,
