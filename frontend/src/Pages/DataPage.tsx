@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
+import { Box, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
-import { useNavigate } from 'react-router'
+import { data, useNavigate } from 'react-router'
 import { useLocation } from 'react-router'
 import { useMemo } from 'react'
 
 import Chart from '../components/Chart'
 import Table from '../components/Table'
 
-import { type User } from '../types/Users'
+import { type User, type UserWeight, type ApiRespWeight } from '../types/Users'
 import { type Event, type ApiRespEvent } from '../types/Events'
 import { type Activity, type ApiRespActivity } from '../types/Activities'
 
@@ -16,8 +16,10 @@ export default function DataPage() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
   const [activities, setActivities] = useState<Activity[]>([])
+  const [textFieldValue, setTextFieldValue] = useState<string>('')
+  const [validEntries, setValidEntries] = useState<UserWeight[]>([])
   const location = useLocation();
-  const user: User | undefined = useMemo(() => location.state?.user, [location.state])
+  const user: User | undefined = useMemo(() => location.state?.user, [])
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -43,12 +45,20 @@ export default function DataPage() {
     fetchActivities();
   }, []);
 
-  const validEntries = useMemo(
-    () => user?.weight_development.filter((w) => w.weight_kg && !isNaN(parseFloat(w.weight_kg)))?? [], [user]
-  );
+  useEffect(() => {
+    setValidEntries(() => user?.weight_development.filter((w) => parseFloat(w.weight_kg)) ?? [])
+  }, [user])
 
   const xData = useMemo(() => validEntries.map((w) => w.created_at.slice(0, 10)), [validEntries]);
   const yData = useMemo(() => validEntries.map((w) => parseFloat(w.weight_kg)), [validEntries]); 
+
+  const addWeight = async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}users/add/weight/${user?.id}`, 
+      { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ weight_kg: textFieldValue}) }
+    );
+    const data: ApiRespWeight = await res.json()
+    setValidEntries((prev) => [...prev, data.data])
+  }
   
   return (
     <div>
@@ -66,6 +76,18 @@ export default function DataPage() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Chart xData={xData} yData={yData}></Chart>
           </div>
+          <Box component='form' onSubmit={(e) => {e.preventDefault(); addWeight(); setTextFieldValue('')}}>
+            <TextField
+              sx={{ maxWidth: 200, backgroundColor: '#ffffff', borderRadius: 2}}
+              label='Add weight (kg)'
+              type='number'
+              value={textFieldValue}
+              onChange={(e) => { setTextFieldValue(e.target.value) }}
+              fullWidth
+              margin="normal"
+            />
+            <Button type='submit' sx={{ marginTop: 3, marginLeft: 1 }} variant="contained">Add</Button>
+          </Box>
         </div>
       </div>
       <div style={{ display: 'flex', marginTop: 40 }}>

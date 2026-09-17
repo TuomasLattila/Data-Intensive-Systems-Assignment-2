@@ -15,3 +15,8 @@ export type ApiResp = {
   message: string,
   data: User[]
 }
+
+export type ApiRespWeight = {
+  message: string
+  data: UserWeight
+}
