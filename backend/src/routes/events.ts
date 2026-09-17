@@ -16,7 +16,7 @@ router.get('/all/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.patch('/update', async (req, res) => {
+router.patch('/update', async (req: Request, res: Response) => {
     const event: EventResponse = req.body;
 
     try {
@@ -31,5 +31,16 @@ router.patch('/update', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+router.delete('/delete/:id', async (req: Request, res: Response) => {
+    try {
+        await events_pool.query('DELETE FROM events WHERE id = $1', [req.params.id])
+        console.log('Event deleted')
+        res.json({ message: 'Updated event' }); // send message for succesful deletion
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+})
 
 export default router;

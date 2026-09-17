@@ -62,7 +62,7 @@ export default function DataPage() {
           </h1>
           <Box component="h4" sx={{ margin: 0 }}>{user? `Height: ${user.height_cm} cm` : ''}</Box >
           <Box component="h4" sx={{ margin: 0 }}>{user? `Birthday: ${user.date_of_birth.slice(0, 10)}` : ''}</Box >
-          <Box component="h3" sx={{ marginTop: 3 }}>Weight development:</Box >
+          <Box component="h3" sx={{ marginTop: 3 }}>Weight development (users-DB):</Box >
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Chart xData={xData} yData={yData}></Chart>
           </div>
@@ -70,7 +70,7 @@ export default function DataPage() {
       </div>
       <div style={{ display: 'flex', marginTop: 40 }}>
         <div style={{ flex: 1, marginLeft: 10, marginRight: 5}}>
-          <Box component="h3" sx={{ marginTop: 3 }}>Events attended:</Box >
+          <Box component="h3" sx={{ marginTop: 3 }}>Events attended (events-DB):</Box >
           <Table 
             tableType={'events'}
             titles={["Event", "Description", "Date", "Placement"]} 
@@ -78,7 +78,7 @@ export default function DataPage() {
           </Table>
         </div>
         <div style={{ flex: 1, marginRight: 10, marginLeft: 5 }}>
-          <Box component="h3" sx={{ marginTop: 3 }}>Activity:</Box >
+          <Box component="h3" sx={{ marginTop: 3 }}>Activity (activities-DB):</Box >
           <Table 
             tableType={'activities'}
             titles={["Sport", "Duration (min)", "Date", "Burned calories"]} 

@@ -1,7 +1,7 @@
 import { Box, TextField, Button } from '@mui/material'
 import { useState, type ChangeEvent, } from 'react'
 
-export default function FormComponent({ titles, row, onUpdate }: { titles: string[], row: string[], onUpdate: (row: string[]) => Promise<void>} ) {
+export default function FormComponent({ titles, row, onUpdate, onDelete }: { titles: string[], row: string[], onUpdate: (row: string[]) => Promise<void>, onDelete: (id: string) => Promise<void>} ) {
   const [values, setValues] = useState<string[]>(row)
 
   const updateTextField = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, i: number) => {
@@ -42,6 +42,7 @@ export default function FormComponent({ titles, row, onUpdate }: { titles: strin
         margin="normal"
       />
       <Button type="submit" variant="contained">Save</Button>
+      <Button sx={{ marginLeft: 1 }} color='warning' variant="contained" onClick={() => onDelete(values[0])}>Delete</Button>
     </Box>
   );
 }

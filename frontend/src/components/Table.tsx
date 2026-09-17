@@ -16,18 +16,19 @@ import { type ApiRespActivity } from '../types/Activities'
 export default function TableComponent({ tableType, titles, rows }: { tableType: string, titles: string[], rows: string[][] }) {
   const [allRows, setAllRows] = useState<string[][]>(rows)
   const [openForm, setOpenForm] = useState<boolean>(false)
-  const [row, setRow] = useState<string[]>([])
+  const [clickedRow, setClickedRow] = useState<string[]>([])
 
   useEffect(() => {
     setAllRows(rows)
   }, [rows])
 
   const handleRowClick = (row: string[]) => {
-    setRow(row)
+    setClickedRow(row)
     setOpenForm(true)
   }
 
   const updateEvent = async (row: string[]) => {
+    if (clickedRow === row) { setOpenForm(false); return } // return if nothing changed
     const res = await fetch(`${import.meta.env.VITE_API_URL}events/update`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -50,7 +51,36 @@ export default function TableComponent({ tableType, titles, rows }: { tableType:
   }
 
   const updateActivity = async (row: string[]) => {
-    console.log('update activity...')
+    if (clickedRow === row) { setOpenForm(false); return } // return if nothing changed
+    const res = await fetch(`${import.meta.env.VITE_API_URL}activities/update`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: row[0],
+        activity_type: row[1],
+        duration_minutes: row[2],
+        activity_date: row[3],
+        calories_burned: row[4]
+      })
+    })
+    const data: ApiRespActivity = await res.json()
+    const newRow: string[][] = data.data.map((a) => [a.id, a.activity_type, a.duration_minutes, a.activity_date.slice(0, 10), a.calories_burned]);
+    const updatedRows = allRows.map((row) => {
+      const match = newRow.find((r) => r[0] === row[0]);
+      return match ? match : row;
+    });
+    setAllRows(updatedRows)
+    setOpenForm(false)
+  }
+
+  const delteRow = async (id: string) => {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}${tableType}/delete/${id}`, { method: 'DELETE' });
+    const message: { message: string } = await res.json()
+    const updatedRows = allRows.filter((row) => {
+      return row[0] !== id
+    })
+    setAllRows(updatedRows);
+    setOpenForm(false);
   }
 
   return (
@@ -78,7 +108,7 @@ export default function TableComponent({ tableType, titles, rows }: { tableType:
       <Dialog open={openForm}>
         <DialogTitle sx={{ color: 'gray' }}>Edit row data:</DialogTitle>
         <DialogContent>
-          <Form onUpdate={tableType === 'events'? updateEvent : updateActivity} titles={titles} row={row}></Form>
+          <Form onUpdate={tableType === 'events'? updateEvent : updateActivity} titles={titles} row={clickedRow} onDelete={delteRow}></Form>
         </DialogContent>
       </Dialog>
     </TableContainer>
