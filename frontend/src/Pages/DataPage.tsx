@@ -92,7 +92,7 @@ export default function DataPage() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Chart xData={xData} yData={yData}></Chart>
           </div>
-          <Box component="h3" sx={{ marginTop: 3, marginBottom: 0 }}>Add weight (one per day):</Box >
+          <Box component="h3" sx={{ marginTop: 3, marginBottom: 0 }}>Add weight (one per date):</Box >
           <Box component='form' onSubmit={(e) => {e.preventDefault(); addWeight(); setTextFieldValue('')}}>
             <TextField 
               sx={{ maxWidth: 200, backgroundColor: '#ffffff', borderRadius: 2}}
