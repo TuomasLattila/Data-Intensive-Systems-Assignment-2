@@ -46,7 +46,7 @@ export default function TableComponent({ tableType, titles, rows }: { tableType:
       const match = newRow.find((r) => r[0] === row[0]);
       return match ? match : row;
     });
-    setAllRows(updatedRows)
+    setAllRows(updatedRows.sort((a, b) => new Date(b[3]).getTime() - new Date(a[3]).getTime()))
     setOpenForm(false)
   }
 
@@ -69,7 +69,7 @@ export default function TableComponent({ tableType, titles, rows }: { tableType:
       const match = newRow.find((r) => r[0] === row[0]);
       return match ? match : row;
     });
-    setAllRows(updatedRows)
+    setAllRows(updatedRows.sort((a, b) => new Date(b[3]).getTime() - new Date(a[3]).getTime())) //sort and set updated list
     setOpenForm(false)
   }
 

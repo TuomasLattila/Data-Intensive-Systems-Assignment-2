@@ -9,6 +9,7 @@ router.get('/all/:id', async (req: Request, res: Response) => {
     try {
         const result: QueryResult<Activity> = await activities_pool.query('SELECT * FROM activities WHERE user_id = $1', [req.params.id]);
         res.json({ message: 'Get all activities', data: result.rows.map(mapActivityToResponse) }); // returns a list of all activities recorded by all users
+        console.log('Fetched all activities for user')
     } catch (error) {
         console.error('Error fetching activities:', error);
         res.status(500).json({ error: 'Internal server error' });
