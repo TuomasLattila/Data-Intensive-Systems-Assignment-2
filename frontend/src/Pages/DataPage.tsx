@@ -8,7 +8,7 @@ import { useMemo } from 'react'
 import Chart from '../components/Chart'
 import Table from '../components/Table'
 
-import { type User, type UserWeight, type ApiRespWeight } from '../types/Users'
+import { type User, type UserWeight, type ApiRespWeight, type UserWeights } from '../types/Users'
 import { type Event, type ApiRespEvent } from '../types/Events'
 import { type Activity, type ApiRespActivity } from '../types/Activities'
 
@@ -17,6 +17,7 @@ export default function DataPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [activities, setActivities] = useState<Activity[]>([])
   const [textFieldValue, setTextFieldValue] = useState<string>('')
+  const [dateFieldValue, setDateFieldValue] = useState<string>('')
   const [validEntries, setValidEntries] = useState<UserWeight[]>([])
   const location = useLocation();
   const user: User | undefined = useMemo(() => location.state?.user, [])
@@ -46,18 +47,33 @@ export default function DataPage() {
   }, []);
 
   useEffect(() => {
-    setValidEntries(() => user?.weight_development.filter((w) => parseFloat(w.weight_kg)) ?? [])
-  }, [user])
+    const fetchWeights = async () => {
+      if (user) {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}users/weights/${user?.id}`);
+        const data: UserWeights = await res.json()
+        setValidEntries(data.data.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()) ?? [])
+      }
+    }
+
+    fetchWeights();
+  }, [])
 
   const xData = useMemo(() => validEntries.map((w) => w.created_at.slice(0, 10)), [validEntries]);
   const yData = useMemo(() => validEntries.map((w) => parseFloat(w.weight_kg)), [validEntries]); 
 
   const addWeight = async () => {
     const res = await fetch(`${import.meta.env.VITE_API_URL}users/add/weight/${user?.id}`, 
-      { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ weight_kg: textFieldValue}) }
+      { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ created_at: dateFieldValue, weight_kg: textFieldValue}) }
     );
     const data: ApiRespWeight = await res.json()
-    setValidEntries((prev) => [...prev, data.data])
+
+    setValidEntries((prev) => { // set new saved weight
+      const i = validEntries.findIndex((row) => row.created_at === data.data.created_at)
+      if (i === -1) return [...prev, data.data]
+      const updated = [...prev]
+      updated[i] = data.data
+      return updated
+    })
   }
   
   return (
@@ -76,10 +92,18 @@ export default function DataPage() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Chart xData={xData} yData={yData}></Chart>
           </div>
+          <Box component="h3" sx={{ marginTop: 3, marginBottom: 0 }}>Add weight (one per day):</Box >
           <Box component='form' onSubmit={(e) => {e.preventDefault(); addWeight(); setTextFieldValue('')}}>
-            <TextField
+            <TextField 
               sx={{ maxWidth: 200, backgroundColor: '#ffffff', borderRadius: 2}}
-              label='Add weight (kg)'
+              type='date'
+              margin='normal'
+              value={dateFieldValue}
+              onChange={(e) => { setDateFieldValue(e.target.value) }}
+            />
+            <TextField
+              sx={{ maxWidth: 200, backgroundColor: '#ffffff', borderRadius: 2, marginLeft: 1}}
+              label='Weight (kg)'
               type='number'
               value={textFieldValue}
               onChange={(e) => { setTextFieldValue(e.target.value) }}
@@ -92,7 +116,7 @@ export default function DataPage() {
       </div>
       <div style={{ display: 'flex', marginTop: 40 }}>
         <div style={{ flex: 1, marginLeft: 10, marginRight: 5}}>
-          <Box component="h3" sx={{ marginTop: 3 }}>Events attended (events-DB):</Box >
+          <Box component="h3" sx={{ marginTop: 3 }}>Events attended (events-DB): <br /> (click row to edit)</Box >
           <Table 
             tableType={'events'}
             titles={["Event", "Description", "Date", "Placement"]} 
@@ -100,7 +124,7 @@ export default function DataPage() {
           </Table>
         </div>
         <div style={{ flex: 1, marginRight: 10, marginLeft: 5 }}>
-          <Box component="h3" sx={{ marginTop: 3 }}>Activity (activities-DB):</Box >
+          <Box component="h3" sx={{ marginTop: 3 }}>Activity (activities-DB): <br /> (click row to edit)</Box >
           <Table 
             tableType={'activities'}
             titles={["Sport", "Duration (min)", "Date", "Burned calories"]} 

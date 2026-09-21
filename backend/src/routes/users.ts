@@ -18,12 +18,31 @@ router.get('/all', async (req: Request, res: Response) => {
     }
 });
 
+router.get('/weights/:user_id', async (req: Request, res: Response) => {
+    try {
+        const result_weights: QueryResult<UserWeightDevelopment> = await users_pool.query('SELECT * FROM user_weight_development WHERE user_id = $1', [req.params.user_id]);
+        const weights: UserWeightDevelopmentResponse[] = result_weights.rows.map((weightRow) => ({
+            weight_kg: weightRow.weight_kg,
+            created_at: weightRow.created_at
+        }))
+        console.log("Fetched all user's weights")
+        res.json({ message: "Get all user's weights", data: weights });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
 router.post('/add/weight/:user_id', async (req: Request, res: Response) => {
     const body = req.body
     try {
-        const result: QueryResult<UserWeightDevelopment> = await users_pool.query('INSERT INTO user_weight_development (user_id, weight_kg) VALUES ($1, $2) RETURNING *', [req.params.user_id, body.weight_kg])
-        if (!result.rows[0]) {throw new Error('No row returned from sql query')}
-        console.log('Weight added')
+        const result: QueryResult<UserWeightDevelopment> = await users_pool.query(
+            `INSERT INTO user_weight_development (user_id, weight_kg, created_at) VALUES ($1, $2, $3) 
+            ON CONFLICT (user_id, created_at) DO UPDATE SET weight_kg = EXCLUDED.weight_kg
+            RETURNING *`, [req.params.user_id, body.weight_kg, body.created_at]
+        );
+        if (result.rows[0]?.weight_kg === undefined || result.rows[0]?.created_at === undefined) {throw new Error('Error saving new weight')}
+        console.log('Weight saved')
         const resp: UserWeightDevelopmentResponse = { weight_kg: result.rows[0]?.weight_kg, created_at: result.rows[0]?.created_at}
         res.json({ message: 'Get all users', data: resp });
     } catch (error) {

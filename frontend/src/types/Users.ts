@@ -11,6 +11,11 @@ export type UserWeight = {
   created_at: string
 }
 
+export type UserWeights = {
+  message: string,
+  data: UserWeight[]
+}
+
 export type ApiResp = {
   message: string,
   data: User[]

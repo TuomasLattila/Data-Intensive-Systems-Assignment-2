@@ -9,5 +9,6 @@ CREATE TABLE user_weight_development (
     id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id bigint REFERENCES users(id),
     weight_kg NUMERIC(5, 2) NOT NULL,
-    created_at timestamptz DEFAULT CURRENT_TIMESTAMP
+    created_at DATE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_user_and_date UNIQUE (user_id, created_at)
 );
