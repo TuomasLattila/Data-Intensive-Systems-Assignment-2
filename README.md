@@ -1,6 +1,8 @@
 # Data-Intensive-Systems-Assignment-2
 Distributed database system for tracking user's sports progress
 
+## Demo video
+https://youtu.be/0CIAOIdP2os
 
 ## Guide for running the system:
 Prerequisites:
